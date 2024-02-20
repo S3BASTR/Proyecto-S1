@@ -1,0 +1,48 @@
+import random
+
+# Datos iniciales
+salones = ["Salon PL 302", "Salon PL 301", "Salon PL 201", "Salon PL 202", "Salon PL 101", "Salon PL 102",  "Salon PG 201", "Salon PG 202", "Salon PG 203", "Salon PG 301", "Salon PG 302", "Salon PG 303", "Salon PG 304"]
+puestos_por_salon = [31, 28, 33, 32, 31, 30, 31, 30, 27, 26, 20, 20, 26]
+grados = ["5c", "6a", "6b", "6c", "7a", "7b", "8a", "8b", "9a", "9b", "10a", "10b", "11a"]
+
+# Función para verificar si un estudiante puede ocupar un puesto en un salón dado
+def es_asignacion_valida(estudiante, asignaciones):
+    grado_estudiante = estudiante.split(" - ")[0]
+    for asignacion in asignaciones:
+        if asignacion is not None:
+            grado_asignado = asignacion.split(" - ")[0]
+            if grado_asignado == grado_estudiante:
+                return False
+    return True
+
+# Inicializar lista de asignaciones por salón con puestos vacíos
+asignaciones_por_salon = [[] for _ in range(len(salones))]
+
+# Iterar sobre cada salón
+for i in range(len(salones)):
+    salon_actual = salones[i]
+
+    # Asegurarse de que haya puestos disponibles antes de asignar estudiantes
+    if i < len(puestos_por_salon):
+        puestos_disponibles = puestos_por_salon[i]
+
+        # Iterar sobre cada puesto del salón
+        for j in range(puestos_disponibles):
+            estudiante_disponible = None
+
+            # Intentar asignar un estudiante que cumpla con las condiciones
+            intentos = 0
+            while intentos < 100:
+                estudiante_disponible = random.choice(grados)
+                if es_asignacion_valida(estudiante_disponible, asignaciones_por_salon[i]):
+                    break
+                intentos += 1
+
+            # Agregar la asignación al salón
+            asignaciones_por_salon[i].append(f"Grado {estudiante_disponible} - Estudiante {j + 1}")
+    else:
+        print(f"El salón {salon_actual} no tiene puestos especificados.")
+
+# Imprimir las asignaciones por salón
+for i in range(len(salones)):
+    print(f"{salones[i]}: {asignaciones_por_salon[i]}")
