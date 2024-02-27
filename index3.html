@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Distribución Aleatoria de Estudiantes</title>
+    <title>Desplazamiento Aleatorio de Estudiantes</title>
     <style>
         .grado {
             margin-bottom: 20px;
@@ -16,111 +16,111 @@
     </style>
 </head>
 <body>
-    <h1>Distribución Aleatoria de Estudiantes por Grado y Sección</h1>
-    <button onclick="mezclarYMostrarEstudiantes()">Mezclar Estudiantes</button>
+    <h1>Desplazamiento Aleatorio de Estudiantes entre Cursos</h1>
+    <button onclick="desplazarEstudiantes()">Desplazar Estudiantes</button>
     <div id="listaEstudiantes"></div>
 
     <script>
-         function obtenerTodosLosEstudiantes() {
-    let todosLosEstudiantes = [];
-    Object.values(estudiantesPorGrado).forEach(grado => {
-      Object.values(grado).forEach(seccion => {
-        todosLosEstudiantes = todosLosEstudiantes.concat(seccion);
-      });
-    });
-    return todosLosEstudiantes;
-  }
+        let estudiantesPorGrado = {
+            quinto: {
+                "5c": Array.from({ length: 31 }, (_, i) => ({ id: i + 1, nombre: `5c Estudiante ${i + 1}`, grado: "quinto" }))
+            },
+            sexto: {
+                "6a": Array.from({ length: 31 }, (_, i) => ({ id: i + 1, nombre: `6a Estudiante ${i + 1}`, grado: "sexto" })),
+                "6b": Array.from({ length: 31 }, (_, i) => ({ id: i + 1, nombre: `6b Estudiante ${i + 1}`, grado: "sexto" })),
+                "6c": Array.from({ length: 30 }, (_, i) => ({ id: i + 1, nombre: `6c Estudiante ${i + 1}`, grado: "sexto" }))
+            },
+            septimo: {
+                "7a": Array.from({ length: 28 }, (_, i) => ({ id: i + 1, nombre: `7a Estudiante ${i + 1}`, grado: "septimo" })),
+                "7b": Array.from({ length: 27 }, (_, i) => ({ id: i + 1, nombre: `7b Estudiante ${i + 1}`, grado: "septimo" }))
+            },
+            octavo: {
+                "8a": Array.from({ length: 33 }, (_, i) => ({ id: i + 1, nombre: `8a Estudiante ${i + 1}`, grado: "octavo" })),
+                "8b": Array.from({ length: 32 }, (_, i) => ({ id: i + 1, nombre: `8b Estudiante ${i + 1}`, grado: "octavo" }))
+            },
+            noveno: {
+                "9a": Array.from({ length: 20 }, (_, i) => ({ id: i + 1, nombre: `9a Estudiante ${i + 1}`, grado: "noveno" })),
+                "9b": Array.from({ length: 20 }, (_, i) => ({ id: i + 1, nombre: `9b Estudiante ${i + 1}`, grado: "noveno" }))
+            },
+            decimo: {
+                "10a": Array.from({ length: 26 }, (_, i) => ({ id: i + 1, nombre: `10a Estudiante ${i + 1}`, grado: "decimo" })),
+                "10b": Array.from({ length: 26 }, (_, i) => ({ id: i + 1, nombre: `10b Estudiante ${i + 1}`, grado: "decimo" }))
+            },
+            once: {
+                "11a": Array.from({ length: 28 }, (_, i) => ({ id: i + 1, nombre: `11a Estudiante ${i + 1}`, grado: "once" }))
+            }
+        };
 
-  function mezclarYMostrarEstudiantes() {
-    const todosLosEstudiantes = obtenerTodosLosEstudiantes();
-    mezclar(todosLosEstudiantes); // Mezcla todos los estudiantes
+        function desplazarEstudiantes() {
+            const secciones = Object.keys(estudiantesPorGrado.quinto);
+            let listaEstudiantes = [];
 
-    // Recorre cada grado y sección para redistribuir los estudiantes mezclados
-    Object.keys(estudiantesPorGrado).forEach(gradoKey => {
-      Object.keys(estudiantesPorGrado[gradoKey]).forEach(seccionKey => {
-        const cantidadEstudiantes = estudiantesPorGrado[gradoKey][seccionKey].length;
-        estudiantesPorGrado[gradoKey][seccionKey] = todosLosEstudiantes.splice(0, cantidadEstudiantes);
-      });
-    });
+            // Obtener la lista de estudiantes
+            Object.values(estudiantesPorGrado).forEach(grado => {
+                Object.values(grado).forEach(seccion => {
+                    listaEstudiantes = listaEstudiantes.concat(seccion);
+                });
+            });
 
-    mostrarEstudiantes(); // Actualiza la visualización
-  }
+            // Barajar la lista de estudiantes
+            for (let i = listaEstudiantes.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [listaEstudiantes[i], listaEstudiantes[j]] = [listaEstudiantes[j], listaEstudiantes[i]];
+            }
 
+            // Desplazar estudiantes a secciones de manera alterna hasta que se agoten
+            let indiceEstudiante = 0;
 
-    
-      // Definición inicial de los estudiantes por grado y sección
-      let estudiantesPorGrado = {
-        quinto: {
-            "5c": Array.from({ length: 31 }, (_, i) => ({ id: i + 1, nombre: `5c Estudiante ${i + 1}` }))
-        },
-        sexto: {
-            "6a": Array.from({ length: 31 }, (_, i) => ({ id: i + 1, nombre: `6a Estudiante ${i + 1}` })),
-            "6b": Array.from({ length: 31 }, (_, i) => ({ id: i + 1, nombre: `6b Estudiante ${i + 1}` })),
-            "6c": Array.from({ length: 30 }, (_, i) => ({ id: i + 1, nombre: `6c Estudiante ${i + 1}` }))
-        },
-        septimo: {
-            "7a": Array.from({ length: 28 }, (_, i) => ({ id: i + 1, nombre: `7a Estudiante ${i + 1}` })),
-            "7b": Array.from({ length: 27 }, (_, i) => ({ id: i + 1, nombre: `7b Estudiante ${i + 1}` }))
-        },
-        octavo: {
-            "8a": Array.from({ length: 33 }, (_, i) => ({ id: i + 1, nombre: `8a Estudiante ${i + 1}` })),
-            "8b": Array.from({ length: 32 }, (_, i) => ({ id: i + 1, nombre: `8b Estudiante ${i + 1}` }))
-        },
-        noveno: {
-            "9a": Array.from({ length: 20 }, (_, i) => ({ id: i + 1, nombre: `9a Estudiante ${i + 1}` })),
-            "9b": Array.from({ length: 20 }, (_, i) => ({ id: i + 1, nombre: `9b Estudiante ${i + 1}` }))
-        },
-        decimo: {
-            "10a": Array.from({ length: 26 }, (_, i) => ({ id: i + 1, nombre: `10a Estudiante ${i + 1}` })),
-            "10b": Array.from({ length: 26 }, (_, i) => ({ id: i + 1, nombre: `10b Estudiante ${i + 1}` }))
-        },
-        once: {
-            "11a": Array.from({ length: 28 }, (_, i) => ({ id: i + 1, nombre: `11a Estudiante ${i + 1}` }))
+            for (let i = 0; i < secciones.length; i++) {
+                const seccion = secciones[i];
+                let indiceGrado = 0;
+
+                while (indiceEstudiante < listaEstudiantes.length && indiceGrado < Object.keys(estudiantesPorGrado).length) {
+                    const estudiante = listaEstudiantes[indiceEstudiante];
+                    const grado = Object.keys(estudiantesPorGrado)[indiceGrado];
+
+                    if (estudiante.grado !== grado) {
+                        // Verificar que la sección tenga espacio
+                        if (estudiantesPorGrado[grado][seccion].length < estudiantesPorGrado[grado][seccion].length) {
+                            estudiantesPorGrado[grado][seccion].push(estudiante);
+                            indiceEstudiante++;
+                        }
+                    }
+
+                    indiceGrado = (indiceGrado + 1) % Object.keys(estudiantesPorGrado).length;
+                }
+            }
+
+            mostrarEstudiantes();
         }
-      };
 
-      // Función para mezclar un arreglo
-      function mezclar(arreglo) {
-          for (let i = arreglo.length - 1; i > 0; i--) {
-              const j = Math.floor(Math.random() * (i + 1));
-              [arreglo[i], arreglo[j]] = [arreglo[j], arreglo[i]];
-          }
-      }
+        function mostrarEstudiantes() {
+            const contenedor = document.getElementById('listaEstudiantes');
+            contenedor.innerHTML = '';
 
-      function mezclarYMostrarEstudiantes() {
-          // Aquí iría el código para mezclar y redistribuir los estudiantes
+            Object.keys(estudiantesPorGrado).forEach(grado => {
+                const divGrado = document.createElement('div');
+                divGrado.classList.add('grado');
+                divGrado.innerHTML = `<strong>Grado: ${grado.toUpperCase()}</strong>`;
+                contenedor.appendChild(divGrado);
 
-          mostrarEstudiantes(); // Actualiza la visualización
-      }
+                Object.keys(estudiantesPorGrado[grado]).forEach(seccion => {
+                    const divSeccion = document.createElement('div');
+                    divSeccion.classList.add('seccion');
+                    divSeccion.innerHTML = `Sección: ${seccion}`;
+                    divGrado.appendChild(divSeccion);
 
-      function mostrarEstudiantes() {
-          const contenedor = document.getElementById('listaEstudiantes');
-          contenedor.innerHTML = ''; // Limpiar el contenedor antes de mostrar los nuevos datos
+                    estudiantesPorGrado[grado][seccion].forEach(estudiante => {
+                        const divEstudiante = document.createElement('div');
+                        divEstudiante.classList.add('estudiante');
+                        divEstudiante.textContent = `${estudiante.id} - ${estudiante.nombre}`;
+                        divSeccion.appendChild(divEstudiante);
+                    });
+                });
+            });
+        }
 
-          Object.keys(estudiantesPorGrado).forEach(grado => {
-              const divGrado = document.createElement('div');
-              divGrado.classList.add('grado');
-              divGrado.innerHTML = `<strong>Grado: ${grado.toUpperCase()}</strong>`;
-              contenedor.appendChild(divGrado);
-
-              Object.keys(estudiantesPorGrado[grado]).forEach(seccion => {
-                  const divSeccion = document.createElement('div');
-                  divSeccion.classList.add('seccion');
-                  divSeccion.innerHTML = `Sección: ${seccion}`;
-                  divGrado.appendChild(divSeccion);
-
-                  estudiantesPorGrado[grado][seccion].forEach(estudiante => {
-                      const divEstudiante = document.createElement('div');
-                      divEstudiante.classList.add('estudiante');
-                      divEstudiante.textContent = `${estudiante.id} - ${estudiante.nombre}`;
-                      divSeccion.appendChild(divEstudiante);
-                  });
-              });
-          });
-      }
-
-      // Llamada inicial para mostrar los estudiantes antes de cualquier mezcla
-      mostrarEstudiantes();
+        mostrarEstudiantes();
     </script>
 </body>
 </html>
