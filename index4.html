@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Distribución Aleatoria de Estudiantes</title>
+    <style>
+        .grado {
+            margin-bottom: 20px;
+        }
+        .seccion {
+            margin-left: 20px;
+        }
+        .estudiante {
+            margin-left: 40px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Distribución Aleatoria de Estudiantes por Grado y Sección</h1>
+    <button onclick="mezclarYMostrarEstudiantes()">Mezclar Estudiantes</button>
+    <div id="listaEstudiantes"></div>
+
+    <script>
+      let estudiantesPorGrado = {
+        quinto: {
+            "5c": Array.from({ length: 31 }, (_, i) => ({ id: i + 1, nombre: `5c Estudiante ${i + 1}` }))
+        },
+        sexto: {
+            "6a": Array.from({ length: 31 }, (_, i) => ({ id: i + 1, nombre: `6a Estudiante ${i + 1}` })),
+            "6b": Array.from({ length: 31 }, (_, i) => ({ id: i + 1, nombre: `6b Estudiante ${i + 1}` })),
+            "6c": Array.from({ length: 30 }, (_, i) => ({ id: i + 1, nombre: `6c Estudiante ${i + 1}` }))
+        },
+        septimo: {
+            "7a": Array.from({ length: 28 }, (_, i) => ({ id: i + 1, nombre: `7a Estudiante ${i + 1}` })),
+            "7b": Array.from({ length: 27 }, (_, i) => ({ id: i + 1, nombre: `7b Estudiante ${i + 1}` }))
+        },
+        octavo: {
+            "8a": Array.from({ length: 33 }, (_, i) => ({ id: i + 1, nombre: `8a Estudiante ${i + 1}` })),
+            "8b": Array.from({ length: 32 }, (_, i) => ({ id: i + 1, nombre: `8b Estudiante ${i + 1}` }))
+        },
+        noveno: {
+            "9a": Array.from({ length: 20 }, (_, i) => ({ id: i + 1, nombre: `9a Estudiante ${i + 1}` })),
+            "9b": Array.from({ length: 20 }, (_, i) => ({ id: i + 1, nombre: `9b Estudiante ${i + 1}` }))
+        },
+        decimo: {
+            "10a": Array.from({ length: 26 }, (_, i) => ({ id: i + 1, nombre: `10a Estudiante ${i + 1}` })),
+            "10b": Array.from({ length: 26 }, (_, i) => ({ id: i + 1, nombre: `10b Estudiante ${i + 1}` }))
+        },
+        once: {
+            "11a": Array.from({ length: 28 }, (_, i) => ({ id: i + 1, nombre: `11a Estudiante ${i + 1}` }))
+        }
+      };
+
+      function mezclar(arreglo) {
+          for (let i = arreglo.length - 1; i > 0; i--) {
+              const j = Math.floor(Math.random() * (i + 1));
+              [arreglo[i], arreglo[j]] = [arreglo[j], arreglo[i]];
+          }
+      }
+
+      function obtenerTodosLosEstudiantes() {
+          let todosLosEstudiantes = [];
+          Object.values(estudiantesPorGrado).forEach(grado => {
+            Object.values(grado).forEach(seccion => {
+              todosLosEstudiantes = todosLosEstudiantes.concat(seccion);
+            });
+          });
+          return todosLosEstudiantes;
+      }
+
+      function mezclarYMostrarEstudiantes() {
+          const todosLosEstudiantes = obtenerTodosLosEstudiantes();
+          mezclar(todosLosEstudiantes);
+
+          let indiceEstudiante = 0;
+          Object.keys(estudiantesPorGrado).forEach(grado => {
+              Object.keys(estudiantesPorGrado[grado]).forEach(seccion => {
+                  const cantidadEstudiantes = estudiantesPorGrado[grado][seccion].length;
+                  estudiantesPorGrado[grado][seccion] = todosLosEstudiantes.slice(indiceEstudiante, indiceEstudiante + cantidadEstudiantes);
+                  indiceEstudiante += cantidadEstudiantes;
+              });
+          });
+
+          mostrarEstudiantes();
+      }
+
+      function mostrarEstudiantes() {
+          const contenedor = document.getElementById('listaEstudiantes');
+          contenedor.innerHTML = '';
+
+          Object.keys(estudiantesPorGrado).forEach(grado => {
+              const divGrado = document.createElement('div');
+              divGrado.classList.add('grado');
+              divGrado.innerHTML = `<strong>Grado: ${grado.toUpperCase()}</strong>`;
+              contenedor.appendChild(divGrado);
+
+              Object.keys(estudiantesPorGrado[grado]).forEach(seccion => {
+                  const divSeccion = document.createElement('div');
+                  divSeccion.classList.add('seccion');
+                  divSeccion.innerHTML = `Sección: ${seccion}`;
+                  divGrado.appendChild(divSeccion);
+
+                  estudiantesPorGrado[grado][seccion].forEach(estudiante => {
+                      const divEstudiante = document.createElement('div');
+                      divEstudiante.classList.add('estudiante');
+                      divEstudiante.textContent = `${estudiante.id} - ${estudiante.nombre}`;
+                      divSeccion.appendChild(divEstudiante);
+                  });
+              });
+          });
+      }
+
+      mostrarEstudiantes();
+    </script>
+</body>
+</html>
