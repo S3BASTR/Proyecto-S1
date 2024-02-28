@@ -4,60 +4,57 @@
     <meta charset="UTF-8">
     <title>Distribución Aleatoria de Estudiantes</title>
     <style>
-        .grado {
+        .salon {
             margin-bottom: 20px;
         }
         .seccion {
             margin-left: 20px;
         }
+        .pareja {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+        }
         .estudiante {
-            margin-left: 40px;
+            margin-right: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Distribución Aleatoria de Estudiantes por Grado y Sección</h1>
+    <h1>Distribución Aleatoria de Estudiantes por Salón y Sección</h1>
     <button onclick="mezclarYMostrarEstudiantes()">Mezclar Estudiantes</button>
     <div id="listaEstudiantes"></div>
 
     <script>
-        let estudiantesPorGrado = {
-            quinto: {
-                "5c": Array.from({ length: 31 }, (_, i) => ({ id: i + 1, nombre: `5c Estudiante ${i + 1}` }))
+        let estudiantesPorSalon = {
+            PL_3: {
+                "5c": Array.from({ length: 31 }, (_, i) => ({ numero: i + 1, nombre: `5c Estudiante ${i + 1}` }))
             },
-            sexto: {
-                "6a": Array.from({ length: 31 }, (_, i) => ({ id: i + 1, nombre: `6a Estudiante ${i + 1}` })),
-                "6b": Array.from({ length: 31 }, (_, i) => ({ id: i + 1, nombre: `6b Estudiante ${i + 1}` })),
-                "6c": Array.from({ length: 30 }, (_, i) => ({ id: i + 1, nombre: `6c Estudiante ${i + 1}` }))
+            PL_2: {
+                "6a": Array.from({ length: 31 }, (_, i) => ({ numero: i + 1, nombre: `6a Estudiante ${i + 1}` })),
+                "6b": Array.from({ length: 31 }, (_, i) => ({ numero: i + 1, nombre: `6b Estudiante ${i + 1}` })),
+                "6c": Array.from({ length: 30 }, (_, i) => ({ numero: i + 1, nombre: `6c Estudiante ${i + 1}` }))
             },
-            septimo: {
-                "7a": Array.from({ length: 28 }, (_, i) => ({ id: i + 1, nombre: `7a Estudiante ${i + 1}` })),
-                "7b": Array.from({ length: 27 }, (_, i) => ({ id: i + 1, nombre: `7b Estudiante ${i + 1}` }))
+            PL: {
+                "7a": Array.from({ length: 28 }, (_, i) => ({ numero: i + 1, nombre: `7a Estudiante ${i + 1}` })),
+                "7b": Array.from({ length: 27 }, (_, i) => ({ numero: i + 1, nombre: `7b Estudiante ${i + 1}` })),
             },
             octavo: {
-                "8a": Array.from({ length: 33 }, (_, i) => ({ id: i + 1, nombre: `8a Estudiante ${i + 1}` })),
-                "8b": Array.from({ length: 32 }, (_, i) => ({ id: i + 1, nombre: `8b Estudiante ${i + 1}` }))
+                "8a": Array.from({ length: 33 }, (_, i) => ({ numero: i + 1, nombre: `8a Estudiante ${i + 1}` })),
+                "8b": Array.from({ length: 32 }, (_, i) => ({ numero: i + 1, nombre: `8b Estudiante ${i + 1}` })),
             },
-            noveno: {
-                "9a": Array.from({ length: 20 }, (_, i) => ({ id: i + 1, nombre: `9a Estudiante ${i + 1}` })),
-                "9b": Array.from({ length: 20 }, (_, i) => ({ id: i + 1, nombre: `9b Estudiante ${i + 1}` }))
+            noveno:{
+                "9a": Array.from({ length: 20 }, (_, i) => ({ numero: i + 1, nombre: `9a Estudiante ${i + 1}` })),
+                "9b": Array.from({ length: 20 }, (_, i) => ({ numero: i + 1, nombre: `9b Estudiante ${i + 1}` })),
             },
-            decimo: {
-                "10a": Array.from({ length: 26 }, (_, i) => ({ id: i + 1, nombre: `10a Estudiante ${i + 1}` })),
-                "10b": Array.from({ length: 26 }, (_, i) => ({ id: i + 1, nombre: `10b Estudiante ${i + 1}` }))
+            decimo:{
+                "10a": Array.from({ length: 26 }, (_, i) => ({ numero: i + 1, nombre: `10a Estudiante ${i + 1}` })),
+                "10b": Array.from({ length: 26 }, (_, i) => ({ numero: i + 1, nombre: `10b Estudiante ${i + 1}` })),
             },
-            once: {
-                "11a": Array.from({ length: 28 }, (_, i) => ({ id: i + 1, nombre: `11a Estudiante ${i + 1}` }))
+            PL_301:{
+                "11a": Array.from({ length: 28 }, (_, i) => ({ numero: i + 1, nombre: `11a Estudiante ${i + 1}` })),
             }
         };
-
-        let numerosInicialesPorSeccion = {};
-
-        Object.keys(estudiantesPorGrado).forEach(grado => {
-            Object.keys(estudiantesPorGrado[grado]).forEach(seccion => {
-                numerosInicialesPorSeccion[seccion] = 1;
-            });
-        });
 
         function mezclar(arreglo) {
             for (let i = arreglo.length - 1; i > 0; i--) {
@@ -68,7 +65,7 @@
 
         function obtenerTodosLosEstudiantes() {
             let todosLosEstudiantes = [];
-            Object.values(estudiantesPorGrado).forEach(grado => {
+            Object.values(estudiantesPorSalon).forEach(grado => {
                 Object.values(grado).forEach(seccion => {
                     todosLosEstudiantes = todosLosEstudiantes.concat(seccion);
                 });
@@ -81,43 +78,94 @@
             mezclar(todosLosEstudiantes);
 
             let indiceEstudiante = 0;
-            Object.keys(estudiantesPorGrado).forEach(grado => {
-                Object.keys(estudiantesPorGrado[grado]).forEach(seccion => {
-                    const cantidadEstudiantes = estudiantesPorGrado[grado][seccion].length;
-                    estudiantesPorGrado[grado][seccion] = todosLosEstudiantes.slice(indiceEstudiante, indiceEstudiante + cantidadEstudiantes);
-                    indiceEstudiante += cantidadEstudiantes;
+            Object.keys(estudiantesPorSalon).forEach(salon => {
+                Object.keys(estudiantesPorSalon[salon]).forEach(seccion => {
+                    const estudiantesSeccion = estudiantesPorSalon[salon][seccion];
+                    estudiantesPorSalon[salon][seccion] = estudiantesSeccion.map(estudiante => {
+                        const estudianteMezclado = todosLosEstudiantes[indiceEstudiante];
+                        indiceEstudiante++;
+                        return {
+                            numero: estudiante.numero,  // Mantener el número fijo
+                            nombre: estudianteMezclado.nombre
+                        };
+                    });
                 });
             });
 
+            separarEstudiantes();
             mostrarEstudiantes();
+        }
+
+        function separarEstudiantes() {
+            Object.keys(estudiantesPorSalon).forEach(salon => {
+                Object.keys(estudiantesPorSalon[salon]).forEach(seccion => {
+                    const estudiantesSeccion = estudiantesPorSalon[salon][seccion];
+
+                    for (let i = 0; i < estudiantesSeccion.length; i += 2) {
+                        // Verificar si hay un segundo estudiante en la pareja
+                        if (i + 1 < estudiantesSeccion.length) {
+                            const estudiante1 = estudiantesSeccion[i];
+                            const estudiante2 = estudiantesSeccion[i + 1];
+
+                            // Verificar si los estudiantes son de la misma sección
+                            if (estudiante1.nombre.includes(seccion) && estudiante2.nombre.includes(seccion)) {
+                                // Intercambiar al estudiante2 con un estudiante de otra sección
+                                const otraSeccion = Object.keys(estudiantesPorSalon[salon]).find(s => s !== seccion);
+                                const estudianteOtraSeccion = estudiantesPorSalon[salon][otraSeccion].shift();
+
+                                // Intercambiar
+                                estudiantesSeccion[i + 1] = {
+                                    numero: estudianteOtraSeccion.numero,
+                                    nombre: estudianteOtraSeccion.nombre
+                                };
+                            }
+                        }
+                    }
+                });
+            });
         }
 
         function mostrarEstudiantes() {
             const contenedor = document.getElementById('listaEstudiantes');
             contenedor.innerHTML = '';
 
-            Object.keys(estudiantesPorGrado).forEach(grado => {
-                const divGrado = document.createElement('div');
-                divGrado.classList.add('grado');
-                divGrado.innerHTML = `<strong>Grado: ${grado.toUpperCase()}</strong>`;
-                contenedor.appendChild(divGrado);
+            Object.keys(estudiantesPorSalon).forEach(salon => {
+                const divSalon = document.createElement('div');
+                divSalon.classList.add('salon');
+                divSalon.innerHTML = `<strong>Salón: ${salon.toUpperCase()}</strong>`;
+                contenedor.appendChild(divSalon);
 
-                Object.keys(estudiantesPorGrado[grado]).forEach(seccion => {
+                Object.keys(estudiantesPorSalon[salon]).forEach(seccion => {
                     const divSeccion = document.createElement('div');
                     divSeccion.classList.add('seccion');
                     divSeccion.innerHTML = `Sección: ${seccion}`;
-                    divGrado.appendChild(divSeccion);
+                    divSalon.appendChild(divSeccion);
 
-                    estudiantesPorGrado[grado][seccion].forEach(estudiante => {
-                        const divEstudiante = document.createElement('div');
-                        divEstudiante.classList.add('estudiante');
-                        divEstudiante.textContent = `${numerosInicialesPorSeccion[seccion]++}. ${estudiante.nombre}`;
-                        divSeccion.appendChild(divEstudiante);
-                    });
+                    const estudiantesSeccion = estudiantesPorSalon[salon][seccion];
+                    for (let i = 0; i < estudiantesSeccion.length; i += 2) {
+                        const divPareja = document.createElement('div');
+                        divPareja.classList.add('pareja');
+
+                        const divEstudiante1 = document.createElement('div');
+                        divEstudiante1.classList.add('estudiante');
+                        divEstudiante1.textContent = `${estudiantesSeccion[i].numero}. ${estudiantesSeccion[i].nombre}`;
+                        divPareja.appendChild(divEstudiante1);
+
+                        // Verificar si hay un segundo estudiante en la pareja
+                        if (i + 1 < estudiantesSeccion.length) {
+                            const divEstudiante2 = document.createElement('div');
+                            divEstudiante2.classList.add('estudiante');
+                            divEstudiante2.textContent = `${estudiantesSeccion[i + 1].numero}. ${estudiantesSeccion[i + 1].nombre}`;
+                            divPareja.appendChild(divEstudiante2);
+                        }
+
+                        divSeccion.appendChild(divPareja);
+                    }
                 });
             });
         }
 
+        // Mostrar estudiantes por primera vez
         mostrarEstudiantes();
     </script>
 </body>
