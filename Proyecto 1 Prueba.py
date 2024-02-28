@@ -1,48 +1,134 @@
-import random
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Distribución Aleatoria de Estudiantes</title>
+    <style>
+        .salon {
+            margin-bottom: 20px;
+        }
+        .seccion {
+            margin-left: 20px;
+        }
+        .pareja {
+            display: flex;
+            flex-direction: column; /* Cambiado a columna para mostrar verticalmente */
+            margin-bottom: 10px;
+        }
+        .estudiante {
+            margin-bottom: 5px; /* Añadido margen inferior para separar verticalmente los estudiantes */
+        }
+    </style>
+</head>
+<body>
+    <h1>Distribución Aleatoria de Estudiantes por Salón y Sección</h1>
+    <button onclick="mezclarYMostrarEstudiantes()">Mezclar Estudiantes</button>
+    <div id="listaEstudiantes"></div>
 
-def asignar_estudiantes():
-    # Datos iniciales
-    salones = ["Salon 302", "Salon 201", "Salon 202", "Salon 101", "Salon 102","Salon a","Salon b","Salon c","Salon d","Salon e"]
-    puestos_por_salon = [31, 33, 32, 31, 30,32,32,32,31,30]
-    grados = [601,602,701,702, 801,802, 901,902,1001, 1002]
+    <script>
+        let estudiantesPorSalon = {
+            pl201: {
+                "5c": Array.from({ length: 31 }, (_, i) => ({ numero: i + 1, nombre: `5c Estudiante ${i + 1}` }))
+            },
+            sexto: {
+                "6a": Array.from({ length: 31 }, (_, i) => ({ numero: i + 1, nombre: `6a Estudiante ${i + 1}` })),
+                "6b": Array.from({ length: 31 }, (_, i) => ({ numero: i + 1, nombre: `6b Estudiante ${i + 1}` })),
+                "6c": Array.from({ length: 30 }, (_, i) => ({ numero: i + 1, nombre: `6c Estudiante ${i + 1}` }))
+            },
+            septimo: {
+                "7a": Array.from({ length: 28 }, (_, i) => ({ numero: i + 1, nombre: `7a Estudiante ${i + 1}` })),
+                "7b": Array.from({ length: 27 }, (_, i) => ({ numero: i + 1, nombre: `7b Estudiante ${i + 1}` })),
+            },
+            octavo: {
+                "8a": Array.from({ length: 33 }, (_, i) => ({ numero: i + 1, nombre: `8a Estudiante ${i + 1}` })),
+                "8b": Array.from({ length: 32 }, (_, i) => ({ numero: i + 1, nombre: `8b Estudiante ${i + 1}` })),
+            },
+            noveno:{
+                "9a": Array.from({ length: 20 }, (_, i) => ({ numero: i + 1, nombre: `9a Estudiante ${i + 1}` })),
+                "9b": Array.from({ length: 20 }, (_, i) => ({ numero: i + 1, nombre: `9b Estudiante ${i + 1}` })),
+            },
+            decimo:{
+                "10a": Array.from({ length: 26 }, (_, i) => ({ numero: i + 1, nombre: `10a Estudiante ${i + 1}` })),
+                "10b": Array.from({ length: 26 }, (_, i) => ({ numero: i + 1, nombre: `10b Estudiante ${i + 1}` })),
+            },
+            once:{
+                "11a": Array.from({ length: 28 }, (_, i) => ({ numero: i + 1, nombre: `11a Estudiante ${i + 1}` })),
+            }
+        };
 
+        function mezclar(arreglo) {
+            for (let i = arreglo.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arreglo[i], arreglo[j]] = [arreglo[j], arreglo[i]];
+            }
+        }
 
-    # Crear una lista con la cantidad total de estudiantes
-    estudiantes = [f"Grado {grado} - Estudiante {i+1}" for grado in grados for i in range(3)]
+        function obtenerTodosLosEstudiantes() {
+            let todosLosEstudiantes = [];
+            Object.values(estudiantesPorSalon).forEach(grado => {
+                Object.values(grado).forEach(seccion => {
+                    todosLosEstudiantes = todosLosEstudiantes.concat(seccion);
+                });
+            });
+            return todosLosEstudiantes;
+        }
 
-    # Mezclar aleatoriamente la lista de estudiantes
-    random.shuffle(estudiantes)
+        function mezclarYMostrarEstudiantes() {
+            const todosLosEstudiantes = obtenerTodosLosEstudiantes();
+            mezclar(todosLosEstudiantes);
 
-    # Asignar estudiantes a los salones sin repetir en puestos cercanos
-    asignaciones = {}
-    for i in range(len(salones)):
-        asignaciones[salones[i]] = []
-        for grado in grados:
-            # Seleccionar estudiantes de un grado específico
-            estudiantes_grado = [estudiante for estudiante in estudiantes if f"Grado {grado}" in estudiante]
+            let indiceEstudiante = 0;
+            Object.keys(estudiantesPorSalon).forEach(salon => {
+                Object.keys(estudiantesPorSalon[salon]).forEach(seccion => {
+                    const estudiantesSeccion = estudiantesPorSalon[salon][seccion];
+                    estudiantesPorSalon[salon][seccion] = estudiantesSeccion.map(estudiante => {
+                        const estudianteMezclado = todosLosEstudiantes[indiceEstudiante];
+                        indiceEstudiante++;
+                        return {
+                            numero: estudiante.numero,  // Mantener el número fijo
+                            nombre: estudianteMezclado.nombre
+                        };
+                    });
+                });
+            });
 
-            for j in range(puestos_por_salon[i]):
-                # Verificar que hay estudiantes disponibles antes de hacer pop
-                if estudiantes_grado:
-                    asignaciones[salones[i]].append(estudiantes_grado.pop(0))
-                    # Evitar repetir estudiantes del mismo grado en puestos cercanos
-                    while j > 0 and asignaciones[salones[i]][j].split()[1] == asignaciones[salones[i]][j-1].split()[1]:
-                        random.shuffle(estudiantes_grado)
-                        if estudiantes_grado:
-                            asignaciones[salones[i]][j] = estudiantes_grado.pop(0)
-                        else:
-                            break
-                else:
-                    break  # Salir del bucle si no hay más estudiantes disponibles
+            mostrarEstudiantes();
+        }
 
-    return asignaciones
+        function mostrarEstudiantes() {
+            const contenedor = document.getElementById('listaEstudiantes');
+            contenedor.innerHTML = '';
 
-# Ejecutar la función y obtener las asignaciones
-resultados = asignar_estudiantes()
+            Object.keys(estudiantesPorSalon).forEach(salon => {
+                const divSalon = document.createElement('div');
+                divSalon.classList.add('salon');
+                divSalon.innerHTML = `<strong>Salón: ${salon.toUpperCase()}</strong>`;
+                contenedor.appendChild(divSalon);
 
-# Imprimir los resultados
-for salon, estudiantes in resultados.items():
-    print(f"{salon}: {estudiantes}")
+                Object.keys(estudiantesPorSalon[salon]).forEach(seccion => {
+                    const divSeccion = document.createElement('div');
+                    divSeccion.classList.add('seccion');
+                    divSeccion.innerHTML = `Sección: ${seccion}`;
+                    divSalon.appendChild(divSeccion);
 
+                    const estudiantesSeccion = estudiantesPorSalon[salon][seccion];
+                    const divPareja = document.createElement('div');
+                    divPareja.classList.add('pareja');
 
+                    estudiantesSeccion.forEach(estudiante => {
+                        const divEstudiante = document.createElement('div');
+                        divEstudiante.classList.add('estudiante');
+                        divEstudiante.textContent = `${estudiante.numero}. ${estudiante.nombre}`;
+                        divPareja.appendChild(divEstudiante);
+                    });
 
+                    divSeccion.appendChild(divPareja);
+                });
+            });
+        }
+
+        // Mostrar estudiantes por primera vez
+        mostrarEstudiantes();
+    </script>
+</body>
+</html>
