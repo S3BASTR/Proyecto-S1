@@ -27,15 +27,15 @@
 
     <script>
         let estudiantesPorSalon = {
-            PL_3: {
+            pl201: {
                 "5c": Array.from({ length: 31 }, (_, i) => ({ numero: i + 1, nombre: `5c Estudiante ${i + 1}` }))
             },
-            PL_2: {
+            sexto: {
                 "6a": Array.from({ length: 31 }, (_, i) => ({ numero: i + 1, nombre: `6a Estudiante ${i + 1}` })),
                 "6b": Array.from({ length: 31 }, (_, i) => ({ numero: i + 1, nombre: `6b Estudiante ${i + 1}` })),
                 "6c": Array.from({ length: 30 }, (_, i) => ({ numero: i + 1, nombre: `6c Estudiante ${i + 1}` }))
             },
-            PL: {
+            septimo: {
                 "7a": Array.from({ length: 28 }, (_, i) => ({ numero: i + 1, nombre: `7a Estudiante ${i + 1}` })),
                 "7b": Array.from({ length: 27 }, (_, i) => ({ numero: i + 1, nombre: `7b Estudiante ${i + 1}` })),
             },
@@ -51,7 +51,7 @@
                 "10a": Array.from({ length: 26 }, (_, i) => ({ numero: i + 1, nombre: `10a Estudiante ${i + 1}` })),
                 "10b": Array.from({ length: 26 }, (_, i) => ({ numero: i + 1, nombre: `10b Estudiante ${i + 1}` })),
             },
-            PL_301:{
+            once:{
                 "11a": Array.from({ length: 28 }, (_, i) => ({ numero: i + 1, nombre: `11a Estudiante ${i + 1}` })),
             }
         };
@@ -73,6 +73,14 @@
             return todosLosEstudiantes;
         }
 
+        function estudiantesDeLaMismaSeccion(estudiante1, estudiante2) {
+            return estudiante1.nombre.includes(estudiante2.nombre.split(" ")[1]);
+        }
+
+        function estudiantesDelMismoSalon(estudiante1, estudiante2) {
+            return estudiante1.nombre.split(" ")[1] === estudiante2.nombre.split(" ")[1];
+        }
+
         function mezclarYMostrarEstudiantes() {
             const todosLosEstudiantes = obtenerTodosLosEstudiantes();
             mezclar(todosLosEstudiantes);
@@ -85,7 +93,7 @@
                         const estudianteMezclado = todosLosEstudiantes[indiceEstudiante];
                         indiceEstudiante++;
                         return {
-                            numero: estudiante.numero,  // Mantener el número fijo
+                            numero: estudiante.numero,
                             nombre: estudianteMezclado.nombre
                         };
                     });
@@ -97,27 +105,42 @@
         }
 
         function separarEstudiantes() {
+            const seccionesPorSalon = {};
+
+            Object.keys(estudiantesPorSalon).forEach(salon => {
+                seccionesPorSalon[salon] = {};
+                Object.keys(estudiantesPorSalon[salon]).forEach(seccion => {
+                    seccionesPorSalon[salon][seccion] = [...estudiantesPorSalon[salon][seccion]];
+                });
+            });
+
             Object.keys(estudiantesPorSalon).forEach(salon => {
                 Object.keys(estudiantesPorSalon[salon]).forEach(seccion => {
                     const estudiantesSeccion = estudiantesPorSalon[salon][seccion];
 
                     for (let i = 0; i < estudiantesSeccion.length; i += 2) {
-                        // Verificar si hay un segundo estudiante en la pareja
                         if (i + 1 < estudiantesSeccion.length) {
                             const estudiante1 = estudiantesSeccion[i];
                             const estudiante2 = estudiantesSeccion[i + 1];
 
-                            // Verificar si los estudiantes son de la misma sección
-                            if (estudiante1.nombre.includes(seccion) && estudiante2.nombre.includes(seccion)) {
-                                // Intercambiar al estudiante2 con un estudiante de otra sección
-                                const otraSeccion = Object.keys(estudiantesPorSalon[salon]).find(s => s !== seccion);
-                                const estudianteOtraSeccion = estudiantesPorSalon[salon][otraSeccion].shift();
+                            if (estudiantesDeLaMismaSeccion(estudiante1, estudiante2) || estudiantesDelMismoSalon(estudiante1, estudiante2)) {
+                                const otraSeccion = Object.keys(seccionesPorSalon[salon]).find(s => s !== seccion);
+                                const estudiantesOtraSeccion = seccionesPorSalon[salon][otraSeccion];
 
-                                // Intercambiar
-                                estudiantesSeccion[i + 1] = {
-                                    numero: estudianteOtraSeccion.numero,
-                                    nombre: estudianteOtraSeccion.nombre
-                                };
+                                const candidatos = estudiantesOtraSeccion.filter(est =>
+                                    !estudiantesDeLaMismaSeccion(estudiante1, est) && !estudiantesDelMismoSalon(estudiante1, est) && est.nombre !== estudiante1.nombre
+                                );
+
+                                if (candidatos.length > 0) {
+                                    const estudianteOtraSeccion = candidatos[Math.floor(Math.random() * candidatos.length)];
+
+                                    estudiantesSeccion[i + 1] = {
+                                        numero: estudianteOtraSeccion.numero,
+                                        nombre: estudianteOtraSeccion.nombre
+                                    };
+
+                                    seccionesPorSalon[salon][otraSeccion] = seccionesPorSalon[salon][otraSeccion].filter(est => est !== estudianteOtraSeccion);
+                                }
                             }
                         }
                     }
@@ -151,7 +174,6 @@
                         divEstudiante1.textContent = `${estudiantesSeccion[i].numero}. ${estudiantesSeccion[i].nombre}`;
                         divPareja.appendChild(divEstudiante1);
 
-                        // Verificar si hay un segundo estudiante en la pareja
                         if (i + 1 < estudiantesSeccion.length) {
                             const divEstudiante2 = document.createElement('div');
                             divEstudiante2.classList.add('estudiante');
@@ -165,7 +187,6 @@
             });
         }
 
-        // Mostrar estudiantes por primera vez
         mostrarEstudiantes();
     </script>
 </body>
