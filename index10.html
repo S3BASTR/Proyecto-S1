@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animaciones de Aparición</title>
+    <!--<link rel="stylesheet" href="../CSS/styles.css">-->
+</head>
+
+<body>
+    <div class="container">
+        <div class="box" data-title="11A" onclick="showInfo('11A')">Salón PL 301</div>
+        <div class="box" data-title="6A" onclick="showInfo('6A')">Salón PL 302</div>
+        <div class="box" data-title="8B" onclick="showInfo('8B')">Salón PL 202</div>
+        <div class="box" data-title="8A" onclick="showInfo('8A')">Salón PL 201</div>
+        <div class="box" data-title="6B" onclick="showInfo('6B')">Salón PL 101</div>
+        <div class="box" data-title="6C" onclick="showInfo('6C')">Salón PL 102</div>
+        <div class="box" data-title="7B" onclick="showInfo('7B')">Salón PG 203</div>
+        <div class="box" data-title="7A" onclick="showInfo('7A')">Salón PG 202</div>
+        <div class="box" data-title="5C" onclick="showInfo('5C')">Salón PG 201</div>
+        <div class="box" data-title="10A" onclick="showInfo('10A')">Salón PG 301</div>
+        <div class="box" data-title="9A" onclick="showInfo('9A')">Salón PG 302</div>
+        <div class="box" data-title="9B" onclick="showInfo('9B')">Salón PG 303</div>
+        <div class="box" data-title="10B" onclick="showInfo('10B')">Salón PG 304</div>
+        
+    </div>
+
+    <div id="infoContainer" class="info-container">
+        <div id="infoContent" class="info-content">
+            <div id="initialList" class="info-body"></div>
+
+            <div class="info-header">
+                <h2 id="infoTitle"></h2>
+                <button onclick="hideInfo()">Cerrar</button>
+            </div>
+            <div id="infoList" class="info-body"></div>
+            <div id="initialList" class="info-body"></div>
+        </div>
+    </div>
+
+    <div class="buttons-container">
+        <button onclick="assignStudentsRandomly()">Asignar Aleatoriamente</button>
+
+        <button onclick="organizeLists()">Organizar</button>
+    </div>
+
+    <script src="../JS/script.js"></script>
+</body>
+
+</html>
