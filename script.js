@@ -114,14 +114,20 @@ function assignStudentsRandomly() {
     }
 }
 
-// Función para organizar los estudiantes en sus puestos originales
+
 function organizeLists() {
-    // Restaurar cada salón a su lista original
+    // Ordenar cada lista de estudiantes numéricamente de menor a mayor
     for (var salon of ["11A", "9B", "6A", "8A", "5C", "8B", "6B", "9A", "6C", "7A", "10A", "7B", "10B"]) {
         var originalList = originalLists[salon];
+        originalList.sort(function (a, b) {
+            var numA = parseInt(a.match(/\d+/)[0], 10);
+            var numB = parseInt(b.match(/\d+/)[0], 10);
+            return numA - numB;
+        });
         updateSalon(salon, originalList);
     }
 }
+
 
 // Función para mezclar un array
 function shuffleArray(array) {
