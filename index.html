@@ -1,81 +1,51 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
-    <title>Lista de Estudiantes por Grado y Sección</title>
-    <style>
-        .grado {
-            margin-bottom: 20px;
-        }
-        .seccion {
-            margin-left: 20px;
-        }
-        .estudiante {
-            margin-left: 40px;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animaciones de Aparición</title>
+    <!--<link rel="stylesheet" href="../CSS/styles.css">-->
 </head>
+
 <body>
-    <h1>Lista de Estudiantes por Grado y Sección</h1>
-    <div id="listaEstudiantes"></div>
+    <div class="container">
+        <div class="box" data-title="11A" onclick="showInfo('11A')">Salón PL 301</div>
+        <div class="box" data-title="6A" onclick="showInfo('6A')">Salón PL 302</div>
+        <div class="box" data-title="8B" onclick="showInfo('8B')">Salón PL 202</div>
+        <div class="box" data-title="8A" onclick="showInfo('8A')">Salón PL 201</div>
+        <div class="box" data-title="6B" onclick="showInfo('6B')">Salón PL 101</div>
+        <div class="box" data-title="6C" onclick="showInfo('6C')">Salón PL 102</div>
+        <div class="box" data-title="7B" onclick="showInfo('7B')">Salón PG 203</div>
+        <div class="box" data-title="7A" onclick="showInfo('7A')">Salón PG 202</div>
+        <div class="box" data-title="5C" onclick="showInfo('5C')">Salón PG 201</div>
+        <div class="box" data-title="10A" onclick="showInfo('10A')">Salón PG 301</div>
+        <div class="box" data-title="9A" onclick="showInfo('9A')">Salón PG 302</div>
+        <div class="box" data-title="9B" onclick="showInfo('9B')">Salón PG 303</div>
+        <div class="box" data-title="10B" onclick="showInfo('10B')">Salón PG 304</div>
+        
+    </div>
 
-    <script>
-      const estudiantesPorGrado = {
-        quinto: {
-            "5c": Array.from({ length: 31 }, (_, i) => ({ id: i + 1, nombre: `5c Estudiante ${i + 1}` }))
-        },
-        sexto: {
-            "6a": Array.from({ length: 31 }, (_, i) => ({ id: i + 1, nombre: `6a Estudiante ${i + 1}` })),
-            "6b": Array.from({ length: 31 }, (_, i) => ({ id: i + 1, nombre: `6b Estudiante ${i + 1}` })),
-            "6c": Array.from({ length: 30 }, (_, i) => ({ id: i + 1, nombre: `6c Estudiante ${i + 1}` }))
-        },
-        septimo: {
-            "7a": Array.from({ length: 28 }, (_, i) => ({ id: i + 1, nombre: `7a Estudiante ${i + 1}` })),
-            "7b": Array.from({ length: 27 }, (_, i) => ({ id: i + 1, nombre: `7b Estudiante ${i + 1}` }))
-        },
-        octavo: {
-            "8a": Array.from({ length: 33 }, (_, i) => ({ id: i + 1, nombre: `8a Estudiante ${i + 1}` })),
-            "8b": Array.from({ length: 32 }, (_, i) => ({ id: i + 1, nombre: `8b Estudiante ${i + 1}` }))
-        },
-        noveno: {
-            "9a": Array.from({ length: 20 }, (_, i) => ({ id: i + 1, nombre: `9a Estudiante ${i + 1}` })),
-            "9b": Array.from({ length: 20 }, (_, i) => ({ id: i + 1, nombre: `9b Estudiante ${i + 1}` }))
-        },
-        decimo: {
-            "10a": Array.from({ length: 26 }, (_, i) => ({ id: i + 1, nombre: `10a Estudiante ${i + 1}` })),
-            "10b": Array.from({ length: 26 }, (_, i) => ({ id: i + 1, nombre: `10b Estudiante ${i + 1}` }))
-        },
-        once: {
-            "11a": Array.from({ length: 28 }, (_, i) => ({ id: i + 1, nombre: `11a Estudiante ${i + 1}` }))
-        }
-      };
+    <div id="infoContainer" class="info-container">
+        <div id="infoContent" class="info-content">
+            <div id="initialList" class="info-body"></div>
 
-      function mostrarEstudiantes() {
-        const contenedor = document.getElementById('listaEstudiantes');
+            <div class="info-header">
+                <h2 id="infoTitle"></h2>
+                <button onclick="hideInfo()">Cerrar</button>
+            </div>
+            <div id="infoList" class="info-body"></div>
+            <div id="initialList" class="info-body"></div>
+        </div>
+    </div>
 
-        Object.keys(estudiantesPorGrado).forEach(grado => {
-            const divGrado = document.createElement('div');
-            divGrado.classList.add('grado');
-            divGrado.innerHTML = `<strong>Grado: ${grado.toUpperCase()}</strong>`;
-            contenedor.appendChild(divGrado);
+    <div class="buttons-container">
+        <button onclick="assignStudentsRandomly()">Asignar Aleatoriamente</button>
 
-            Object.keys(estudiantesPorGrado[grado]).forEach(seccion => {
-                const divSeccion = document.createElement('div');
-                divSeccion.classList.add('seccion');
-                divSeccion.innerHTML = `Sección: ${seccion}`;
-                divGrado.appendChild(divSeccion);
+        <button onclick="organizeLists()">Organizar</button>
+    </div>
 
-                estudiantesPorGrado[grado][seccion].forEach(estudiante => {
-                    const divEstudiante = document.createElement('div');
-                    divEstudiante.classList.add('estudiante');
-                    divEstudiante.textContent = `${estudiante.id} - ${estudiante.nombre}`;
-                    divSeccion.appendChild(divEstudiante);
-                });
-            });
-        });
-      }
-
-      mostrarEstudiantes();
-    </script>
+    <script src="../JS/script.js"></script>
 </body>
+
 </html>

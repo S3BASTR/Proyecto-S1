@@ -78,32 +78,34 @@ function hideInfo() {
     document.getElementById("infoContainer").style.display = "none";
 }
 
-// Función para asignar los estudiantes secuencialmente a cada salón de manera aleatoria
-function assignStudentsRandomly() {
-    // Secuencia personalizada de los salones
-    var customSequence = ["11A", "9B", "6A", "8A", "5C", "8B", "6B", "9A", "6C", "7A", "10A", "7B", "10B"];
 
-    // Crear un objeto para almacenar a los estudiantes de cada curso
-    var studentsByCourse = {};
-    for (var salon of customSequence) {
+// Función para asignar los estudiantes aleatoriamente a cada salón sin seguir una secuencia específica
+function assignStudentsRandomly() {
+    // Obtener la lista de todos los estudiantes de todos los salones
+    var allStudents = [];
+    for (var salon of ["11A", "9B", "6A", "8A", "5C", "8B", "6B", "9A", "6C", "7A", "10A", "7B", "10B"]) {
         var infoData = getInfoData(salon);
         var students = infoData.slice(3); // Ignorar los primeros 3 elementos que contienen información de la clase
-        studentsByCourse[salon] = shuffleArray(students); // Mezclar los estudiantes de este curso
+        allStudents = allStudents.concat(students);
         originalLists[salon] = students.slice(); // Hacer una copia de la lista original
     }
 
-    // Asignar los estudiantes secuencialmente a cada salón
-    var allStudents = [];
-    for (var i = 0; i < 33; i++) { // 33 es la cantidad máxima de estudiantes entre todos los salones
-        for (var salon of customSequence) {
-            var students = studentsByCourse[salon];
-            if (i < students.length) {
-                allStudents.push(students[i]);
-            }
-        }
+    // Mezclar la lista completa de estudiantes de manera aleatoria
+    var shuffledStudents = shuffleArray(allStudents);
+
+    // Asignar los estudiantes aleatoriamente a cada salón
+    var startIndex = 0;
+    for (var salon of ["11A", "9B", "6A", "8A", "5C", "8B", "6B", "9A", "6C", "7A", "10A", "7B", "10B"]) {
+        var infoData = getInfoData(salon);
+        var cantidadEstudiantes = infoData.length - 3;
+        var estudiantesSalon = shuffledStudents.slice(startIndex, startIndex + cantidadEstudiantes);
+        startIndex += cantidadEstudiantes;
+        updateSalon(salon, estudiantesSalon);
     }
 
-    // Asignar los estudiantes secuencialmente a cada salón
+
+
+    // Asignar los estudiantes aleatoriamente a cada salón
     var startIndex = 0;
     for (var salon of customSequence) {
         var infoData = getInfoData(salon);
@@ -113,7 +115,6 @@ function assignStudentsRandomly() {
         updateSalon(salon, estudiantesSalon);
     }
 }
-
 
 function organizeLists() {
     // Ordenar cada lista de estudiantes numéricamente de menor a mayor
@@ -148,18 +149,31 @@ function shuffleArray(array) {
     return array;
 }
 
+
+
 // Función para actualizar la información de un salón con los estudiantes dados
 function updateSalon(title, students) {
     var salonElement = document.querySelector(".box[data-title='" + title + "']");
     var ul = document.createElement("ul");
+
+    // Objeto para almacenar la cantidad de estudiantes por curso en el salón
+    var estudiantesPorCurso = {};
+
     students.forEach(function (student) {
         var li = document.createElement("li");
         li.textContent = student;
         ul.appendChild(li);
-    });
 
-    // Limpiar el salón antes de agregar los estudiantes
-    salonElement.innerHTML = "";
+        // Obtener el curso del estudiante
+        var curso = student.match(/Curso ([^\s]+)/)[1];
+
+        // Incrementar la cantidad de estudiantes para ese curso en el salón
+        if (estudiantesPorCurso[curso]) {
+            estudiantesPorCurso[curso]++;
+        } else {
+            estudiantesPorCurso[curso] = 1;
+        }
+    });
 
     // Mostrar el título del salón
     var titleDiv = document.createElement("div");
@@ -168,7 +182,22 @@ function updateSalon(title, students) {
 
     // Agregar la lista de estudiantes
     salonElement.appendChild(ul);
-}
 
-// En algún punto donde quieras asignar estudiantes secuencialmente, llama a la función:
-// assignStudentsSequentially();
+    // Mostrar la cantidad total de estudiantes en el salón
+    var totalEstudiantesDiv = document.createElement("div");
+    totalEstudiantesDiv.textContent = "Total de estudiantes: " + students.length;
+    salonElement.appendChild(totalEstudiantesDiv);
+
+    // Mostrar la cantidad de estudiantes por curso
+    var cursosDiv = document.createElement("div");
+    cursosDiv.textContent = "Cantidad de estudiantes por curso:";
+    salonElement.appendChild(cursosDiv);
+
+    // Mostrar la cantidad de estudiantes por curso de manera organizada
+    for (var curso in estudiantesPorCurso) {
+        var cantidad = estudiantesPorCurso[curso];
+        var cursoInfo = document.createElement("div");
+        cursoInfo.textContent = curso + ": " + cantidad;
+        salonElement.appendChild(cursoInfo);
+    }
+}
