@@ -1,6 +1,3 @@
-// Variables globales para almacenar las listas originales de estudiantes
-var originalLists = {};
-
 // Función para mostrar la información del salón
 function showInfo(title) {
     var infoTitle = document.getElementById("infoTitle");
@@ -58,6 +55,60 @@ function getInfoData(title) {
     }
 }
 
+// Función para mostrar la información del salón
+function showInfo(title) {
+    var infoTitle = document.getElementById("infoTitle");
+    var infoList = document.getElementById("infoList");
+
+    infoTitle.textContent = "Información del cuadro " + title;
+    infoList.innerHTML = "";
+
+    var infoData = getInfoData(title);
+
+    var ul = document.createElement("ul");
+    infoData.forEach(function (item) {
+        var li = document.createElement("li");
+        li.textContent = item;
+        ul.appendChild(li);
+    });
+
+    infoList.appendChild(ul);
+
+    // Mostrar la cantidad de estudiantes por grado
+    showStudentCountByGrade(infoData);
+
+    document.getElementById("infoContainer").style.display = "flex";
+}
+
+// Función para mostrar la cantidad de estudiantes por grado
+function showStudentCountByGrade(infoData) {
+    var gradeCount = {};
+
+    // Contar la cantidad de estudiantes por grado
+    for (var i = 3; i < infoData.length; i++) {
+        var grade = infoData[i].split(" - ")[1]; // Obtener el grado desde el texto del estudiante
+        if (gradeCount[grade]) {
+            gradeCount[grade]++;
+        } else {
+            gradeCount[grade] = 1;
+        }
+    }
+
+    // Mostrar la información en la lista
+    var ul = document.createElement("ul");
+    ul.innerHTML = "<li>Cantidad de Estudiantes por Grado:</li>";
+    for (var grade in gradeCount) {
+        var li = document.createElement("li");
+        li.textContent = grade + ": " + gradeCount[grade] + " estudiantes";
+        ul.appendChild(li);
+    }
+
+    document.getElementById("infoList").appendChild(ul);
+}
+
+// Resto del código...
+
+
 // Función para generar la lista de estudiantes para cada salón
 function generateStudentList(salon, cantidad) {
     var infoList = [
@@ -78,102 +129,99 @@ function hideInfo() {
     document.getElementById("infoContainer").style.display = "none";
 }
 
-
-// Función para asignar los estudiantes aleatoriamente a cada salón sin seguir una secuencia específica
-function assignStudentsRandomly() {
-    // Obtener la lista de todos los estudiantes de todos los salones
+// Función para mezclar los estudiantes entre todos los salones
+// Función para mezclar los estudiantes entre todos los salones
+// Función para mezclar los estudiantes entre todos los salones
+function shuffleLists() {
+    // Crear una lista de todos los estudiantes
     var allStudents = [];
-    for (var salon of ["11A", "9B", "6A", "8A", "5C", "8B", "6B", "9A", "6C", "7A", "10A", "7B", "10B"]) {
+    var totalStudentCount = 0;  // Variable para llevar un seguimiento del total de estudiantes
+
+    for (var salon of ["11A", "6A", "8B", "8A", "6B", "6C", "7B", "7A", "5C", "10A", "9A", "9B", "10B"]) {
         var infoData = getInfoData(salon);
         var students = infoData.slice(3); // Ignorar los primeros 3 elementos que contienen información de la clase
         allStudents = allStudents.concat(students);
-        originalLists[salon] = students.slice(); // Hacer una copia de la lista original
+        totalStudentCount += students.length;  // Actualizar el total de estudiantes
     }
 
-    // Mezclar la lista completa de estudiantes de manera aleatoria
-    var shuffledStudents = shuffleArray(allStudents);
+    // Mezclar la lista de estudiantes
+    allStudents = assignStudentsRandomly(allStudents);
 
-    // Asignar los estudiantes aleatoriamente a cada salón
+    // Asignar los estudiantes mezclados a cada salón
     var startIndex = 0;
-    for (var salon of ["11A", "9B", "6A", "8A", "5C", "8B", "6B", "9A", "6C", "7A", "10A", "7B", "10B"]) {
-        var infoData = getInfoData(salon);
-        var cantidadEstudiantes = infoData.length - 3;
-        var estudiantesSalon = shuffledStudents.slice(startIndex, startIndex + cantidadEstudiantes);
-        startIndex += cantidadEstudiantes;
-        updateSalon(salon, estudiantesSalon);
-    }
-
-
-
-    // Asignar los estudiantes aleatoriamente a cada salón
-    var startIndex = 0;
-    for (var salon of customSequence) {
+    for (var salon of ["11A", "6A", "8B", "8A", "6B", "6C", "7B", "7A", "5C", "10A", "9A", "9B", "10B"]) {
         var infoData = getInfoData(salon);
         var cantidadEstudiantes = infoData.length - 3;
         var estudiantesSalon = allStudents.slice(startIndex, startIndex + cantidadEstudiantes);
         startIndex += cantidadEstudiantes;
         updateSalon(salon, estudiantesSalon);
+
+        // Mostrar la cantidad de estudiantes por curso en el salón después de mezclar
+        showStudentCountByCourse(salon, estudiantesSalon);
     }
+
+    // Mostrar la cantidad total de estudiantes después de la mezcla
+    showTotalStudentCount(totalStudentCount);
 }
 
+// Función para mostrar la cantidad de estudiantes por curso en el salón después de mezclar
+function showStudentCountByCourse(salon, estudiantesSalon) {
+    var courseCount = {};
+
+    // Contar la cantidad de estudiantes por curso en el salón
+    for (var i = 0; i < estudiantesSalon.length; i++) {
+        var course = estudiantesSalon[i].split(" - ")[1]; // Obtener el curso desde el texto del estudiante
+        if (courseCount[course]) {
+            courseCount[course]++;
+        } else {
+            courseCount[course] = 1;
+        }
+    }
+
+    // Mostrar la información en la lista
+    var ul = document.createElement("ul");
+    ul.innerHTML = "<li>Cantidad de Estudiantes por Curso en " + salon + ":</li>";
+    for (var course in courseCount) {
+        var li = document.createElement("li");
+        li.textContent = course + ": " + courseCount[course] + " estudiantes";
+        ul.appendChild(li);
+    }
+
+    document.getElementById("infoList").appendChild(ul);
+}
+
+
+// Función para mostrar la cantidad total de estudiantes después de la mezcla
+function showTotalStudentCount(totalStudentCount) {
+    var ul = document.createElement("ul");
+    ul.innerHTML = "<li>Total de Estudiantes Después de Mezclar:</li>" +
+                   "<li>" + totalStudentCount + " estudiantes</li>";
+    
+    document.getElementById("infoList").appendChild(ul);
+}
+
+
+// Función para organizar los estudiantes en sus salones originales
 function organizeLists() {
-    // Ordenar cada lista de estudiantes numéricamente de menor a mayor
-    for (var salon of ["11A", "9B", "6A", "8A", "5C", "8B", "6B", "9A", "6C", "7A", "10A", "7B", "10B"]) {
-        var originalList = originalLists[salon];
-        originalList.sort(function (a, b) {
-            var numA = parseInt(a.match(/\d+/)[0], 10);
-            var numB = parseInt(b.match(/\d+/)[0], 10);
-            return numA - numB;
-        });
-        updateSalon(salon, originalList);
+    for (var salon of ["11A", "6A", "8B", "8A", "6B", "6C", "7B", "7A", "5C", "10A", "9A", "9B", "10B"]) {
+        var infoData = getInfoData(salon);
+        var students = infoData.slice(3); // Ignorar los primeros 3 elementos que contienen información de la clase
+        updateSalon(salon, students);
     }
 }
-
-
-// Función para mezclar un array
-function shuffleArray(array) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
-
-    // Mientras queden elementos a mezclar
-    while (0 !== currentIndex) {
-        // Seleccionar un elemento sin mezclar restante
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-
-        // Intercambiarlo con el elemento actual
-        temporaryValue = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporaryValue;
-    }
-
-    return array;
-}
-
-
 
 // Función para actualizar la información de un salón con los estudiantes dados
 function updateSalon(title, students) {
     var salonElement = document.querySelector(".box[data-title='" + title + "']");
     var ul = document.createElement("ul");
-
-    // Objeto para almacenar la cantidad de estudiantes por curso en el salón
-    var estudiantesPorCurso = {};
-
     students.forEach(function (student) {
         var li = document.createElement("li");
         li.textContent = student;
         ul.appendChild(li);
-
-        // Obtener el curso del estudiante
-        var curso = student.match(/Curso ([^\s]+)/)[1];
-
-        // Incrementar la cantidad de estudiantes para ese curso en el salón
-        if (estudiantesPorCurso[curso]) {
-            estudiantesPorCurso[curso]++;
-        } else {
-            estudiantesPorCurso[curso] = 1;
-        }
     });
+
+    // Limpiar el salón antes de agregar los estudiantes
+    salonElement.innerHTML = "";
 
     // Mostrar el título del salón
     var titleDiv = document.createElement("div");
@@ -182,22 +230,31 @@ function updateSalon(title, students) {
 
     // Agregar la lista de estudiantes
     salonElement.appendChild(ul);
+}
 
-    // Mostrar la cantidad total de estudiantes en el salón
-    var totalEstudiantesDiv = document.createElement("div");
-    totalEstudiantesDiv.textContent = "Total de estudiantes: " + students.length;
-    salonElement.appendChild(totalEstudiantesDiv);
+// Función para asignar estudiantes aleatoriamente sin repetir del mismo curso seguidos
+function assignStudentsRandomly(students) {
+    var currentIndex = students.length, randomIndex, temporaryValue;
 
-    // Mostrar la cantidad de estudiantes por curso
-    var cursosDiv = document.createElement("div");
-    cursosDiv.textContent = "Cantidad de estudiantes por curso:";
-    salonElement.appendChild(cursosDiv);
+    // Mientras haya elementos para mezclar
+    while (currentIndex !== 0) {
+        // Seleccionar un elemento sin mezclar
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
 
-    // Mostrar la cantidad de estudiantes por curso de manera organizada
-    for (var curso in estudiantesPorCurso) {
-        var cantidad = estudiantesPorCurso[curso];
-        var cursoInfo = document.createElement("div");
-        cursoInfo.textContent = curso + ": " + cantidad;
-        salonElement.appendChild(cursoInfo);
+        // Intercambiarlo con el elemento actual
+        temporaryValue = students[currentIndex];
+        students[currentIndex] = students[randomIndex];
+        students[randomIndex] = temporaryValue;
+
+        // Verificar que no haya estudiantes del mismo curso seguidos
+        if (currentIndex > 0 && students[currentIndex].includes("Curso " + students[currentIndex - 1].substring(students[currentIndex - 1].length - 3))) {
+            // Si hay estudiantes del mismo curso seguidos, intercambiar con un elemento anterior
+            temporaryValue = students[currentIndex - 1];
+            students[currentIndex - 1] = students[randomIndex];
+            students[randomIndex] = temporaryValue;
+        }
     }
+
+    return students;
 }
